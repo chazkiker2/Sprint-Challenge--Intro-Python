@@ -88,6 +88,16 @@ for c in cities:
 # Tucson: (32.1558,-110.8777)
 # Salt Lake City: (40.7774,-111.9301)
 
+class Error(Exception):
+    pass
+
+
+class InputError(Error):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
+
+
 # TODO Get latitude and longitude values from the user
 
 def city_reader_stretch(lat1, lon1, lat2, lon2, cities_list=None):
@@ -104,3 +114,40 @@ def city_reader_stretch(lat1, lon1, lat2, lon2, cities_list=None):
         city for city in cities
         if lat_low <= city.lat <= lat_high and lon_low <= city.lon <= lon_high
     ]
+
+
+def user_prompt():
+    coords_one = input(">> Enter lat1,lon1: ")
+    coords_two = input(">> Enter lat2,lon2: ")
+
+    args1 = coords_one.strip().split(',')
+    if len(args1) < 2:
+        raise InputError(args1, "Not enough arguments given")
+
+    args2 = coords_two.strip().split(',')
+    if len(args2) < 2:
+        raise InputError(args2, "Not enough arguments given")
+
+    try:
+        lat1, lon1 = [float(num) for num in args1]
+    except ValueError:
+        print(f"{args1[0], args1[1]} could not be parsed as numbers!")
+    else:
+        try:
+            lat2, lon2 = [float(num) for num in args2]
+        except ValueError:
+            print(f"{args2[0], args2[1]} could not be parsed as numbers!")
+        else:
+            print("your input was good enough!")
+            lst = city_reader_stretch(
+                lat1=lat1,
+                lon1=lon1,
+                lat2=lat2,
+                lon2=lon2,
+                cities_list=cities
+            )
+            print(lst)
+
+
+if __name__ == '__main__':
+    user_prompt()
